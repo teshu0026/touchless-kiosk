@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - AeroTouch Kiosk</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .food-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .food-card.hovered {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent);
+        }
+
+        .food-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 2rem;
+            padding: 1.5rem 3rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-btn.hovered {
+            background: var(--highlight);
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        section {
+            padding: 2rem 0;
+            width: 100%;
+        }
+
+        section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body class="menu-page">
+    <div id="app">
+        <!-- Webcam Input (Hidden but Active) -->
+        <video id="webcam" autoplay playsinline></video>
+
+        <header>
+            <div class="logo">AERO<span class="highlight">TOUCH</span></div>
+            <div class="status">
+                <span class="status-dot"></span> Digital Menu
+            </div>
+        </header>
+
+        <main>
+            <div class="hero">
+                <h1>Our Delicious Menu</h1>
+                <p>Scroll down with gestures to see more.</p>
+            </div>
+
+            <!-- Scroll Controls -->
+            <div class="scroll-controls">
+                <div class="scroll-btn interactive" id="btn-up">
+                    <span class="arrow">↑</span>
+                    <h3>Up</h3>
+                </div>
+                <div class="scroll-btn interactive" id="btn-down">
+                    <span class="arrow">↓</span>
+                    <h3>Down</h3>
+                </div>
+            </div>
+
+            <section id="section-main">
+                <h2>Chef's Specials</h2>
+                <div class="menu-grid">
+                    <div class="food-card interactive" id="food-1">
+                        <div class="food-icon">🍔</div>
+                        <h3>Classic Wagyu</h3>
+                        <p>Premium wagyu beef with truffle mayo</p>
+                        <div class="price">$14.99</div>
+                    </div>
+                    <div class="food-card interactive" id="food-2">
+                        <div class="food-icon">🍕</div>
+                        <h3>Burrata Bliss</h3>
+                        <p>Fresh burrata and san marzano tomatoes</p>
+                        <div class="price">$18.50</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-sides">
+                <h2>Premium Sides</h2>
+                <div class="menu-grid">
+                    <div class="food-card interactive" id="food-3">
+                        <div class="food-icon">🍟</div>
+                        <h3>Truffle Fries</h3>
+                        <p>Hand-cut fries with parmesan oil</p>
+                        <div class="price">$7.99</div>
+                    </div>
+                    <div class="food-card interactive" id="food-4">
+                        <div class="food-icon">🥗</div>
+                        <h3>Quinoa Harvest</h3>
+                        <p>Roasted veggies and lemon tahini</p>
+                        <div class="price">$12.50</div>
+                    </div>
+                    <div class="food-card interactive" id="food-5">
+                        <div class="food-icon">🧅</div>
+                        <h3>Crispy Rings</h3>
+                        <p>Beer-battered with spicy aioli</p>
+                        <div class="price">$6.50</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-drinks">
+                <h2>Drinks & Desserts</h2>
+                <div class="menu-grid">
+                    <div class="food-card interactive" id="food-6">
+                        <div class="food-icon">🥤</div>
+                        <h3>Nitro Coffee</h3>
+                        <p>Cold brew with creamy head</p>
+                        <div class="price">$5.50</div>
+                    </div>
+                    <div class="food-card interactive" id="food-7">
+                        <div class="food-icon">🍰</div>
+                        <h3>Mango Mousse</h3>
+                        <p>Fresh mango and light cream</p>
+                        <div class="price">$8.99</div>
+                    </div>
+                    <div class="food-card interactive" id="food-8">
+                        <div class="food-icon">🍨</div>
+                        <h3>Vanilla Bean</h3>
+                        <p>Madagascar vanilla with berries</p>
+                        <div class="price">$7.50</div>
+                    </div>
+                </div>
+            </section>
+
+            <div style="text-align: center; margin: 4rem 0;">
+                <div class="back-btn interactive" id="card-back">
+                    <h3>Go Back to Home</h3>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AeroTouch Kiosk. Premium Dining Experience.</p>
+        </footer>
+
+        <!-- Custom Cursor -->
+        <div id="cursor" class="cursor">
+            <svg class="cursor-ring" width="60" height="60" viewBox="0 0 60 60">
+                <circle class="ring-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                <circle class="ring-progress" cx="30" cy="30" r="26" stroke-width="4"></circle>
+            </svg>
+        </div>
+
+        <!-- Notification/Feedback Area -->
+        <div id="notification" class="hidden">Action Triggered!</div>
+    </div>
+
+    <script type="module">
+        import { initKiosk } from "./kiosk-logic.js";
+
+        initKiosk({
+            onTrigger: (el) => {
+                if (el.id === "card-back") {
+                    window.showNotification("Going Back to Home...");
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1000);
+                } else if (el.id === "btn-down") {
+                    window.scrollBy({ top: 400, behavior: 'smooth' });
+                    window.showNotification("Scrolling Down");
+                } else if (el.id === "btn-up") {
+                    window.scrollBy({ top: -400, behavior: 'smooth' });
+                    window.showNotification("Scrolling Up");
+                } else if (el.id.startsWith("food-")) {
+                    const foodName = el.querySelector("h3").innerText;
+                    window.showNotification(`Added ${foodName} to Cart`);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
