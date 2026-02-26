@@ -58,6 +58,23 @@
       <p>&copy; 2026 AeroTouch Kiosk. All Rights Reserved. Created by Ritesh Kamboj.</p>
     </footer>
 
+
+    <!-- Orders Modal -->
+    <div class="modal-overlay" id="orders-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>My Orders</h2>
+          <div id="btn-close-orders" class="interactive btn-secondary" style="padding: 0.5rem 1rem;">Close</div>
+        </div>
+        <div class="item-list" id="orders-list">
+          <!-- Orders injected by JS -->
+        </div>
+        <div class="modal-footer">
+          <div id="btn-clear-orders" class="interactive btn-secondary" style="margin-top: 1rem;">Clear History</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Custom Cursor -->
     <div id="cursor" class="cursor">
       <svg class="cursor-ring" width="60" height="60" viewBox="0 0 60 60">

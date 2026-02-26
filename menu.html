@@ -178,6 +178,7 @@
                 </div>
             </section>
 
+
             <div style="text-align: center; margin: 4rem 0;">
                 <div class="back-btn interactive" id="card-back">
                     <h3>Go Back to Home</h3>
@@ -185,27 +186,95 @@
             </div>
         </main>
 
+        <!-- Floating Cart Button -->
+        <div class="cart-floating-btn interactive" id="btn-cart">
+            <span style="font-size: 2rem;">🛒</span>
+            <div class="cart-count" id="cart-count">0</div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div class="modal-overlay" id="cart-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Your Cart</h2>
+                    <div id="btn-close-cart" class="interactive btn-secondary" style="padding: 0.5rem 1rem;">Close</div>
+                </div>
+                <div class="item-list" id="cart-items">
+                    <!-- Items injected by JS -->
+                </div>
+                <div class="modal-footer">
+                    <div class="total-line">
+                        <span>Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                    <div id="btn-order-now" class="interactive btn-primary">Order Now</div>
+                </div>
+            </div>
+        </div>
+
+
         <footer>
             <p>&copy; 2026 AeroTouch Kiosk. Premium Dining Experience.</p>
         </footer>
-
-        <!-- Custom Cursor -->
-        <div id="cursor" class="cursor">
-            <svg class="cursor-ring" width="60" height="60" viewBox="0 0 60 60">
-                <circle class="ring-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
-                <circle class="ring-progress" cx="30" cy="30" r="26" stroke-width="4"></circle>
-            </svg>
-        </div>
-
-        <!-- Notification/Feedback Area -->
-        <div id="notification" class="hidden">Action Triggered!</div>
     </div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor" class="cursor">
+        <svg class="cursor-ring" width="60" height="60" viewBox="0 0 60 60">
+            <circle class="ring-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+            <circle class="ring-progress" cx="30" cy="30" r="26" stroke-width="4"></circle>
+        </svg>
+    </div>
+
+    <!-- Notification/Feedback Area -->
+    <div id="notification" class="hidden">Action Triggered!</div>
 
     <script type="module">
         import { initKiosk } from "./kiosk-logic.js";
+        import { CartLogic } from "./cart-logic.js";
+
+        const updateCartUI = () => {
+            const cartCount = document.getElementById('cart-count');
+            const itemsContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+
+            if (!cartCount || !itemsContainer || !cartTotal) return;
+
+            const cart = CartLogic.getCart();
+            cartCount.innerText = cart.length;
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<div class="empty-state">Your cart is empty. Add some delicious items!</div>';
+                cartTotal.innerText = '$0.00';
+                return;
+            }
+
+            itemsContainer.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="item-icon">${item.icon}</div>
+                    <div class="item-details">
+                        <h4>${item.name}</h4>
+                        <p>Chef's Choice</p>
+                    </div>
+                    <div class="item-price">${item.price}</div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0).toFixed(2);
+            cartTotal.innerText = `$${total}`;
+        };
+
+        window.addEventListener('cartUpdated', updateCartUI);
+
+        try {
+            updateCartUI();
+        } catch (e) {
+            console.error("Failed to update cart UI", e);
+        }
 
         initKiosk({
             onTrigger: (el) => {
+                if (!el) return;
                 if (el.id === "card-back") {
                     window.showNotification("Going Back to Home...");
                     setTimeout(() => {
@@ -217,9 +286,34 @@
                 } else if (el.id === "btn-up") {
                     window.scrollBy({ top: -400, behavior: 'smooth' });
                     window.showNotification("Scrolling Up");
+                } else if (el.id === "btn-cart") {
+                    const modal = document.getElementById('cart-modal');
+                    if (modal) modal.classList.add('active');
+                    window.showNotification("Opening Cart");
+                } else if (el.id === "btn-close-cart") {
+                    const modal = document.getElementById('cart-modal');
+                    if (modal) modal.classList.remove('active');
+                } else if (el.id === "btn-order-now") {
+                    if (CartLogic.placeOrder()) {
+                        window.showNotification("Order Placed Successfully!");
+                        const modal = document.getElementById('cart-modal');
+                        if (modal) modal.classList.remove('active');
+                    } else {
+                        window.showNotification("Cart is Empty!");
+                    }
                 } else if (el.id.startsWith("food-")) {
-                    const foodName = el.querySelector("h3").innerText;
-                    window.showNotification(`Added ${foodName} to Cart`);
+                    const titleEl = el.querySelector("h3");
+                    const priceEl = el.querySelector(".price");
+                    const iconEl = el.querySelector(".food-icon");
+
+                    if (titleEl && priceEl && iconEl) {
+                        CartLogic.addToCart({
+                            name: titleEl.innerText,
+                            price: priceEl.innerText,
+                            icon: iconEl.innerText
+                        });
+                        window.showNotification(`Added ${titleEl.innerText} to Cart`);
+                    }
                 }
             }
         });

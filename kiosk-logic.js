@@ -96,8 +96,10 @@ export function initKiosk(options = {}) {
             cursorY += (closestEl.y - cursorY) * 0.1;
         }
 
-        cursor.style.left = `${cursorX}px`;
-        cursor.style.top = `${cursorY}px`;
+        if (cursor) {
+            cursor.style.left = `${cursorX}px`;
+            cursor.style.top = `${cursorY}px`;
+        }
 
         checkInteractions();
 
