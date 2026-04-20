@@ -1,11 +1,11 @@
 {
-  "name": "new-folder",
+  "name": "touchless-kiosk",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "mkdir -p dist && cp -a *.html *.css *.js dist/",
     "preview": "vite preview"
   },
   "devDependencies": {
