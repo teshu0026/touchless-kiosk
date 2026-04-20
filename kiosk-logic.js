@@ -70,6 +70,12 @@ export function initKiosk(options = {}) {
             const y = landmark.y * windowHeight;
             targetX = x;
             targetY = y;
+            if (cursor) cursor.style.opacity = '1';
+        } else {
+            // Hand not detected, move cursor off-screen
+            if (cursor) cursor.style.opacity = '0';
+            targetX = -1000;
+            targetY = -1000;
         }
 
         cursorX += (targetX - cursorX) * 0.1;
@@ -84,7 +90,8 @@ export function initKiosk(options = {}) {
             const rect = el.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            const dist = Math.sqrt(Math.pow(cursorX - centerX, 2) + Math.pow(cursorY - centerY, 2));
+            // Use targetX to prevent cursor from getting permanently stuck on buttons
+            const dist = Math.sqrt(Math.pow(targetX - centerX, 2) + Math.pow(targetY - centerY, 2));
             if (dist < minDistance) {
                 minDistance = dist;
                 closestEl = { x: centerX, y: centerY };
@@ -92,8 +99,8 @@ export function initKiosk(options = {}) {
         });
 
         if (closestEl) {
-            cursorX += (closestEl.x - cursorX) * 0.1;
-            cursorY += (closestEl.y - cursorY) * 0.1;
+            cursorX += (closestEl.x - cursorX) * 0.15;
+            cursorY += (closestEl.y - cursorY) * 0.15;
         }
 
         if (cursor) {
@@ -151,7 +158,13 @@ export function initKiosk(options = {}) {
                 if (options.onTrigger) {
                     options.onTrigger(hoveredElement);
                 }
-                hasTriggeredOnElement = true;
+                
+                if (hoveredElement.id === 'btn-down' || hoveredElement.id === 'btn-up') {
+                    hoverStartTime = performance.now();
+                    hasTriggeredOnElement = false;
+                } else {
+                    hasTriggeredOnElement = true;
+                }
             }
         }
     }
